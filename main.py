@@ -15,8 +15,8 @@ def home():
 async def daily_webhook(request: Request):
     payload = await request.json()
 
-    shipment_number = payload.get("shipment_number")
-    awb = payload.get("ext_number")
+    daily_shipment_number = payload.get("shipment_number")
+    aramex_awb = payload.get("ext_number")
 
     data = payload.get("data", {})
     status_id = data.get("status_id")
@@ -25,20 +25,37 @@ async def daily_webhook(request: Request):
     comments = data.get("comments")
     timestamp = data.get("timestamp")
 
+    pinumber = None
+    problem_code = None
+    comment1 = None
+
+    if status_id == "17":
+        pinumber = "SH033"
+        problem_code = "A16"
+        comment1 = "Incorrect address - Address not found"
+
     print("DAILY WEBHOOK RECEIVED")
-    print("Shipment Number:", shipment_number)
-    print("AWB:", awb)
+    print("Daily Shipment Number:", daily_shipment_number)
+    print("Aramex AWB:", aramex_awb)
     print("Status ID:", status_id)
     print("Status Name:", status_name)
     print("Driver:", driver_name)
-    print("Comments:", comments)
-    print("Timestamp:", timestamp)
+    print("Daily Comments:", comments)
+    print("Daily Timestamp:", timestamp)
+    print("Mapped PINumber:", pinumber)
+    print("Mapped ProblemCode:", problem_code)
+    print("Mapped Comment1:", comment1)
 
     return {
         "received": True,
-        "shipment_number": shipment_number,
-        "awb": awb,
+        "daily_shipment_number": daily_shipment_number,
+        "aramex_awb": aramex_awb,
         "status_id": status_id,
-        "comments": comments,
-        "timestamp": timestamp
+        "status_name": status_name,
+        "driver_name": driver_name,
+        "daily_comments": comments,
+        "daily_timestamp": timestamp,
+        "pinumber": pinumber,
+        "problem_code": problem_code,
+        "comment1": comment1
     }
